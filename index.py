@@ -51,8 +51,8 @@ class Button:
 def roll_dice_button_action():
     global player1_position, player2_position, dice_value
     dice_value = random.randint(1, 6)
-    player1_position += dice_value
-    player2_position += dice_value
+    player1_position += (dice_value)*40
+    player2_position += dice_value 
     update_player_position()
 
 # Create the dice roll button
@@ -77,19 +77,19 @@ def draw_board():
 def draw_players():
     if player1_position > 0:
         start_x, start_y = board_x + 25, board_y + image_height - 25
-        x = start_x + ((player1_position - 1) % 10) * 70 + 30
-        y = start_y - ((player1_position - 1) // 10) * 70
+        x = start_x + player1_position
+        y = start_y 
 
         if board_x <= x < board_x + board_rect.width and board_y <= y < board_y + board_rect.height:
             pygame.draw.circle(window, (255, 0, 0), (x, y), 13)
 
     if player2_position > 0:
         start_x, start_y = board_x + 25, board_y + image_height - 25
-        x = start_x + ((player2_position - 1) % 10) * 70 + 50
-        y = start_y - ((player2_position - 1) // 10) * 70 + 40
+        x = start_x + 40
+        y = start_y 
 
         if board_x <= x < board_x + board_rect.width and board_y <= y < board_y + board_rect.height:
-            pygame.draw.circle(window, (0, 255, 0), (x, y), 10)
+            pygame.draw.circle(window, (0, 255, 0), (x, y), 13)
 
 # Function to draw game information
 def draw_game_info():
