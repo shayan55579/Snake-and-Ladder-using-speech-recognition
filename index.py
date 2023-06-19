@@ -51,9 +51,17 @@ class Button:
 def roll_dice_button_action():
     global player1_position, player2_position, dice_value
     dice_value = random.randint(1, 6)
-    player1_position += (dice_value)*40
-    player2_position += dice_value 
+    if current_player == 1:
+        player1_position += dice_value
+    else:
+        player2_position += dice_value
     update_player_position()
+    change_turn()
+
+# Function to change the current player's turn
+def change_turn():
+    global current_player
+    current_player = 2 if current_player == 1 else 1
 
 # Create the dice roll button
 dice_roll_button = Button(350, 500, 100, 50, "Roll Dice", (0, 0, 255), (0, 0, 200), roll_dice_button_action)
@@ -74,37 +82,57 @@ def draw_board():
     window.blit(board_image, (board_x, board_y))
 
 # Function to draw the player circles
+def get_Positions():
+    positions = {}
+    start_x, start_y = board_x + 25, board_y + image_height - 25
+    for j in range(10):  # Loop for different y positions
+        for i in range(10):  # Loop for x positions
+            x_key = f'x{i+1}_{j+1}'
+            y_key = f'y{i+1}_{j+1}'
+
+            x = start_x + i * 70 + 30
+            y = start_y - j * 70
+
+            positions[x_key] = x
+            positions[y_key] = y
+
+    return positions
+
+# Function to draw the players
 def draw_players():
     if player1_position > 0:
         start_x, start_y = board_x + 25, board_y + image_height - 25
-        x = start_x + player1_position
-        y = start_y 
-
-        if board_x <= x < board_x + board_rect.width and board_y <= y < board_y + board_rect.height:
-            pygame.draw.circle(window, (255, 0, 0), (x, y), 13)
+        x_key = f'x{player1_position}_1'
+        y_key = f'y{player1_position}_1'
+        player1_x = get_Positions().get(x_key)
+        player1_y = get_Positions().get(y_key)
+        pygame.draw.circle(window, (255, 0, 0), (player1_x, player1_y), 13)
 
     if player2_position > 0:
         start_x, start_y = board_x + 25, board_y + image_height - 25
-        x = start_x + 40
-        y = start_y 
-
-        if board_x <= x < board_x + board_rect.width and board_y <= y < board_y + board_rect.height:
-            pygame.draw.circle(window, (0, 255, 0), (x, y), 13)
+        x_key = f'x{player2_position}_1'
+        y_key = f'y{player2_position}_1'
+        player2_x = get_Positions().get(x_key)
+        player2_y = get_Positions().get(y_key)
+        pygame.draw.circle(window, (0, 255, 0), (player2_x, player2_y), 13)
 
 # Function to draw game information
 def draw_game_info():
     player1_info = f"Player 1 Position: {player1_position}"
     player2_info = f"Player 2 Position: {player2_position}"
     dice_info = f"Dice Value: {dice_value}"
+    current_player_info = f"Current Player: Player {current_player}"
     draw_text(player1_info, 10, 10, (0, 0, 0))
     draw_text(player2_info, 10, 50, (0, 0, 0))
     draw_text(dice_info, 10, 90, (0, 0, 0))
+    draw_text(current_player_info, 10, 130, (0, 0, 0))
 
 # Initialize speech recognition
 r = sr.Recognizer()
 
 # Main game loop
 running = True
+current_player = 1
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
